@@ -13,6 +13,7 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println(".");
+		Console console = new Console();
+		console.runConsole();
 	}
 }
