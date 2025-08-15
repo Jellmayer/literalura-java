@@ -8,9 +8,9 @@ import com.jellmayer.literalura.repository.AuthorRepository;
 import com.jellmayer.literalura.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,5 +54,13 @@ public class BookService {
 
     public List<Book> findBooksByLanguage(String searchLanguage) {
         return bookRepository.findBooksByLanguageContaining(searchLanguage);
+    }
+
+    public List<Author> findAllAuthors() {
+        return authorRepository.findAll();
+    }
+
+    public List<Author> findAuthorsByYear(Year year) {
+        return authorRepository.findAuthorsAliveInYear(year);
     }
 }

@@ -36,6 +36,14 @@ public class Author {
         return name;
     }
 
+    public Year getBirthYear() {
+        return birthYear;
+    }
+
+    public Year getDeathYear() {
+        return deathYear;
+    }
+
     @Override
     public String toString() {
         return "Author{" +

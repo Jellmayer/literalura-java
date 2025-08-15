@@ -1,5 +1,6 @@
 package com.jellmayer.literalura;
 
+import com.jellmayer.literalura.model.Author;
 import com.jellmayer.literalura.model.Book;
 import com.jellmayer.literalura.model.BookData;
 import com.jellmayer.literalura.model.GutendexResponse;
@@ -8,9 +9,8 @@ import com.jellmayer.literalura.service.BookService;
 import com.jellmayer.literalura.service.ResponseMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.time.Year;
+import java.util.*;
 
 public class Console {
     private static final ApiClient client = new ApiClient();
@@ -26,7 +26,9 @@ public class Console {
 
     public void runConsole() throws IOException, InterruptedException {
         menuLoop: while (true){
-            System.out.println("""
+            int option;
+            try {
+                System.out.println("""
                     
                     
                     **************** MENU LITERALURA *****************
@@ -39,9 +41,13 @@ public class Console {
                     
                     """);
 
-            System.out.print("Escolha uma opção: ");
-            int option = scanner.nextInt();
-            scanner.nextLine();
+                System.out.print("Escolha uma opção: ");
+                option = scanner.nextInt();
+                scanner.nextLine();
+            } catch (NoSuchElementException e) {
+                option = -1; // Direciona para o caso default (opção inválida) no switch
+                scanner.nextLine();
+            }
 
             switch (option){
                 case 0:
@@ -56,12 +62,12 @@ public class Console {
                 case 3:
                     listBooksByLanguage();
                     break;
-//                case 4:
-//                    listAllAuthors();
-//                    break;
-//                case 5:
-//                    listAuthorsByYear();
-//                    break;
+                case 4:
+                    listAllAuthors();
+                    break;
+                case 5:
+                    listAuthorsByYear();
+                    break;
                 default:
                     System.out.println("Opção inválida! Escolha novamente.");
             }
@@ -85,33 +91,36 @@ public class Console {
 
             Book savedBook = service.saveBookFromData(bookData);
 
-            System.out.println("Livro salvo com sucesso!");
-            System.out.println(savedBook);
+            System.out.println("'" + savedBook.getTitle() +"' salvo com sucesso!");
         }
     }
 
+    private void displayBooks(List<Book> books) {
+        books.forEach(book -> {
+            System.out.println("----------------------------------------");
+            System.out.println("Título: " + book.getTitle());
+            System.out.println("Autor: " + book.getAuthor().getName());
+            System.out.println("Idioma: " + book.getLanguage());
+            System.out.println("Downloads: " + book.getDownloadCount());
+            System.out.println("----------------------------------------");
+        });
+    }
+
     public void listAllBooks(){
-        System.out.println("\n----- LIVROS CADASTRADOS -----");
         List<Book> books = service.findAllBooks();
 
         if (books.isEmpty()){
             System.out.println("Nenhum livro cadastrado.");
         } else {
-            books.forEach(book -> {
-                System.out.println("-------------------------------------");
-                System.out.println("Título: " + book.getTitle());
-                System.out.println("Autor: " + book.getAuthor().getName());
-                System.out.println("Idioma: " + book.getLanguage());
-                System.out.println("Downloads: " + book.getDownloadCount());
-                System.out.println("-------------------------------------");
-            });
+            System.out.println("\n********** LIVROS CADASTRADOS **********");
+            displayBooks(books);
         }
     }
 
     public void listBooksByLanguage(){
         System.out.println("""
                 
-                            ----- IDIOMAS DISPONÍVEIS PARA BUSCA -----
+                            ************ IDIOMAS DISPONÍVEIS PARA BUSCA ************
                             1. Inglês
                             2. Português
                             
@@ -129,14 +138,50 @@ public class Console {
         if (books.isEmpty()){
             System.out.println("Nenhum livro encontrado.");
         } else {
-            books.forEach(book -> {
-                System.out.println("-------------------------------------");
-                System.out.println("Título: " + book.getTitle());
-                System.out.println("Autor: " + book.getAuthor().getName());
-                System.out.println("Idioma: " + book.getLanguage());
-                System.out.println("Downloads: " + book.getDownloadCount());
-                System.out.println("-------------------------------------");
-            });
+            System.out.println("\n********** LIVROS ENCONTRADOS **********");
+            displayBooks(books);
+        }
+    }
+
+    public void displayAuthors(List<Author> authors){
+        authors.forEach(author -> {
+            System.out.println("----------------------------------------");
+            System.out.println("Nome: " + author.getName());
+            System.out.println("Ano de nascimento: " + author.getBirthYear());
+            System.out.println("Ano de falecimento: " + (author.getDeathYear() != null ? author.getDeathYear() : "N/A"));
+            System.out.println("----------------------------------------");
+        });
+    }
+
+    public void listAllAuthors(){
+        List<Author> authors = service.findAllAuthors();
+
+        if (authors.isEmpty()){
+            System.out.println("Nenhum autor cadastrado.");
+        } else {
+            System.out.println("\n********** AUTORES CADASTRADOS **********");
+            displayAuthors(authors);
+        }
+    }
+
+    public void listAuthorsByYear(){
+        System.out.println("Qual ano deseja consultar? \n(Anos antes de Cristo devem ser negativos)");
+        try {
+            int yearInput = scanner.nextInt();
+            scanner.nextLine();
+            Year year = Year.of(yearInput);
+
+            List<Author> authors = service.findAuthorsByYear(year);
+
+            if (authors.isEmpty()) {
+                System.out.println("Nenhum autor vivo encontrado no ano de " + yearInput);
+            } else {
+                System.out.println("\n********** AUTORES VIVOS EM " + yearInput + " **********");
+                displayAuthors(authors);
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("Resposta inválida. Por favor, digite um número.");
+            scanner.nextLine();
         }
     }
 }
