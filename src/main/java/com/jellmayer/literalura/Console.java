@@ -8,6 +8,7 @@ import com.jellmayer.literalura.service.BookService;
 import com.jellmayer.literalura.service.ResponseMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -40,6 +41,7 @@ public class Console {
 
             System.out.print("Escolha uma opção: ");
             int option = scanner.nextInt();
+            scanner.nextLine();
 
             switch (option){
                 case 0:
@@ -47,14 +49,19 @@ public class Console {
                     break menuLoop;
                 case 1:
                     searchBook();
+                    break;
                 case 2:
                     listAllBooks();
-//                case 3:
-//                    listBooksByLanguage();
+                    break;
+                case 3:
+                    listBooksByLanguage();
+                    break;
 //                case 4:
 //                    listAllAuthors();
+//                    break;
 //                case 5:
 //                    listAuthorsByYear();
+//                    break;
                 default:
                     System.out.println("Opção inválida! Escolha novamente.");
             }
@@ -65,6 +72,8 @@ public class Console {
         System.out.println("Qual é o nome do livro? ");
         String titleForSearch = scanner.nextLine().toLowerCase().replace(" ", "%20");
         String url = BASE_URL + "?search=" + titleForSearch;
+
+        System.out.println("Buscando por título...");
 
         String json = client.fetchData(url);
         GutendexResponse response = mapper.parseJson(json, GutendexResponse.class);
@@ -87,6 +96,38 @@ public class Console {
 
         if (books.isEmpty()){
             System.out.println("Nenhum livro cadastrado.");
+        } else {
+            books.forEach(book -> {
+                System.out.println("-------------------------------------");
+                System.out.println("Título: " + book.getTitle());
+                System.out.println("Autor: " + book.getAuthor().getName());
+                System.out.println("Idioma: " + book.getLanguage());
+                System.out.println("Downloads: " + book.getDownloadCount());
+                System.out.println("-------------------------------------");
+            });
+        }
+    }
+
+    public void listBooksByLanguage(){
+        System.out.println("""
+                
+                            ----- IDIOMAS DISPONÍVEIS PARA BUSCA -----
+                            1. Inglês
+                            2. Português
+                            
+                            Qual opção deseja?
+                            """);
+        int option = scanner.nextInt();
+        scanner.nextLine();
+        List<Book> books = new ArrayList<>();
+        if (option == 1){
+            books = service.findBooksByLanguage("en");
+        } else if (option == 2) {
+            books = service.findBooksByLanguage("pt");
+        }
+
+        if (books.isEmpty()){
+            System.out.println("Nenhum livro encontrado.");
         } else {
             books.forEach(book -> {
                 System.out.println("-------------------------------------");

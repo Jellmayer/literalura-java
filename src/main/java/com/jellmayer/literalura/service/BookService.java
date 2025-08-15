@@ -51,4 +51,8 @@ public class BookService {
     public List<Book> findAllBooks() {
         return bookRepository.findAll();
     }
+
+    public List<Book> findBooksByLanguage(String searchLanguage) {
+        return bookRepository.findBooksByLanguageContaining(searchLanguage);
+    }
 }
