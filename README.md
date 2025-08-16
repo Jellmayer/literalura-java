@@ -1,6 +1,10 @@
 # Literalura 📚
 
-Este projeto é uma aplicação de console desenvolvida em Java que funciona como um catálogo de livros e faz parte do Challenge Literalura da formação ONE 2025. Ele permite ao usuário buscar livros através da API Gutendex, que fornece dados de livros do Project Gutenberg, e registrar tanto os livros quanto seus autores em um banco de dados local.
+Projeto desenvolvido como parte do **Challenge Literalura** da plataforma **Alura**, no programa **Oracle Next Education**.
+
+Este projeto é uma aplicação de console desenvolvida em Java que funciona como um catálogo de livros. Ele permite ao usuário buscar livros através da API Gutendex, que fornece dados de livros do Project Gutenberg, e registrar tanto os livros quanto seus autores em um banco de dados local.
+
+<img width="200" height="200" alt="Badge do Desafio Literalura" src="https://github.com/user-attachments/assets/3d245c4c-3bf3-49af-a594-2a2083b9991e" />
 
 
 ## ✨ Funcionalidades
